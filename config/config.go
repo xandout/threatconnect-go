@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"log"
 	"os/user"
 	"path"
@@ -22,9 +23,10 @@ func NewConfig(profile string) *Config {
 		log.Fatal(err)
 	}
 	ini := goini.New()
-	parseErr := ini.ParseFile(path.Join(user.HomeDir, ".threatconnect", "config"))
+	confFile := path.Join(user.HomeDir, ".threatconnect", "config")
+	parseErr := ini.ParseFile(confFile)
 	if parseErr != nil {
-		log.Fatal(err)
+		log.Fatal(fmt.Sprintf("err: Does %s exist?", confFile))
 	}
 	apiID, ok := ini.SectionGet(profile, "api_id")
 	if !ok {

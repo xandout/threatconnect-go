@@ -12,7 +12,7 @@ func main() {
 
 	config := *config.NewConfig("sandbox")
 
-	r := *resource.NewResource("/v2/whoami", "GET")
+	r := *resource.NewResource("/v2/groups", "GET")
 
 	tc := threatconnect.New(config)
 	fmt.Println(tc.Request(r))
