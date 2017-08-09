@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/xandout/threatconnect-go/config"
-	"github.com/xandout/threatconnect-go/resource"
 	"github.com/xandout/threatconnect-go/threatconnect"
 )
 
@@ -12,8 +12,16 @@ func main() {
 
 	config := *config.NewConfig("sandbox")
 
-	r := *resource.NewResource("/v2/groups", "GET")
-
 	tc := threatconnect.New(config)
-	fmt.Println(tc.Request(r))
+	owners, err := tc.GetOwners()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Found %d owners \n", owners.Data.ResultCount)
+
+	o, err := tc.GetOwner(427)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(o.Data.Owner.Name)
 }

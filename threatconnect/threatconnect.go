@@ -1,12 +1,14 @@
 package threatconnect
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 
 	"github.com/xandout/threatconnect-go/config"
+	"github.com/xandout/threatconnect-go/owners"
 	"github.com/xandout/threatconnect-go/resource"
 	"github.com/xandout/threatconnect-go/signature"
 )
@@ -43,4 +45,31 @@ func (t ThreatConnect) Request(resource resource.Resource) string {
 	responseString := string(responseData)
 
 	return responseString
+}
+
+// GetOwners returns owners.Result
+func (t ThreatConnect) GetOwners() (*owners.Result, error) {
+	var err error
+	resource := *resource.NewResource("/v2/owners", "GET")
+	ownersResult := new(owners.Result)
+	resJSON := t.Request(resource)
+	json.Unmarshal([]byte(resJSON), &ownersResult)
+	if ownersResult.Status != "Success" {
+		err = fmt.Errorf("got %s status from API", ownersResult.Status)
+	}
+	return ownersResult, err
+}
+
+// GetOwner returns information for the specified owner
+func (t ThreatConnect) GetOwner(id int) (*owners.Owner, error) {
+	var err error
+	endpoint := fmt.Sprintf("/v2/owners/%d", id)
+	resource := *resource.NewResource(endpoint, "GET")
+	rOwner := new(owners.Owner)
+	resJSON := t.Request(resource)
+	json.Unmarshal([]byte(resJSON), &rOwner)
+	if rOwner.Status != "Success" {
+		err = fmt.Errorf("got %s status from API", rOwner.Status)
+	}
+	return rOwner, err
 }
