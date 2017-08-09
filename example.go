@@ -23,5 +23,5 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(o.Data.Owner.Name)
+	fmt.Printf("Owner %d is %s\n", o.Data.Owner.ID, o.Data.Owner.Name)
 }
